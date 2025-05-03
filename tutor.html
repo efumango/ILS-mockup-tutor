@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Intelligent Tutor Mockup</title>
+
+    <!-- Reveal.js Core CSS -->
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <!-- Theme -->
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+
+    <!-- Custom Styles -->
+    <style>
+      /* Ensure slides can scroll if content overflows */
+      .reveal .slides section {
+        overflow-y: auto;
+        max-height: 95vh; /* Adjust as needed */
+        padding-bottom: 20px; /* Space at bottom */
+        box-sizing: border-box;
+        text-align: left; /* Align content left for readability */
+      }
+
+      .question-container {
+        background-color: rgba(50, 50, 70, 0.8);
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .question-text {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+      }
+
+      .question-image,
+      .hint-image {
+        max-width: 80%;
+        height: auto;
+        display: block;
+        margin: 15px auto; /* Center images */
+        border-radius: 5px;
+      }
+
+      .options-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+      }
+
+      .option-item {
+        background-color: rgba(70, 70, 90, 0.9);
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .option-item:hover:not(.disabled) {
+        background-color: rgba(90, 90, 110, 0.9);
+      }
+
+      .fill-blank-input {
+        padding: 10px;
+        font-size: 1em;
+        margin-right: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        min-width: 200px;
+      }
+
+      .submit-button,
+      .hint-button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        background-color: #4caf50; /* Green */
+        color: white;
+        transition: background-color 0.3s ease;
+      }
+      .submit-button:hover:not(:disabled),
+      .hint-button:hover:not(:disabled) {
+        background-color: #45a049;
+      }
+      .submit-button:disabled,
+      .hint-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      .hint-button {
+        background-color: #007bff; /* Blue */
+        margin-top: 15px;
+      }
+      .hint-button:hover:not(:disabled) {
+        background-color: #0056b3;
+      }
+
+      .feedback {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        min-height: 20px; /* Ensure space even when empty */
+      }
+
+      .feedback.correct {
+        background-color: rgba(40, 167, 69, 0.8); /* Greenish */
+        color: #fff;
+        border: 1px solid #28a745;
+      }
+      .feedback.correct::before {
+        content: "✅ ";
+      }
+
+      .feedback.wrong {
+        background-color: rgba(220, 53, 69, 0.8); /* Reddish */
+        color: #fff;
+        border: 1px solid #dc3545;
+      }
+      .feedback.wrong::before {
+        content: "❌ ";
+      }
+
+      .option-item.correct-option {
+        border: 2px solid #28a745;
+        background-color: rgba(40, 167, 69, 0.5);
+      }
+
+      .option-item.wrong-option {
+        border: 2px solid #dc3545;
+        background-color: rgba(220, 53, 69, 0.5);
+      }
+      .option-item.disabled {
+        cursor: default;
+        opacity: 0.7;
+      }
+
+      .hints-container {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #555;
+      }
+
+      .hint-item {
+        background-color: rgba(60, 60, 80, 0.7);
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        font-style: italic;
+        color: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h2>Welcome to the Tutor!</h2>
+          <p>Navigate using the arrows (or swipe) to see the questions.</p>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      // --- Question Data ---
+      const questions = [
+        {
+          type: "mcq",
+          question: "What is the capital of France?",
+          image: null, // No image for this question
+          options: [
+            { text: "Berlin", correct: false },
+            { text: "Madrid", correct: false },
+            { text: "Paris", correct: true },
+            { text: "Rome", correct: false },
+          ],
+          hints: [
+            {
+              text: "It's a major European city known for its art and fashion.",
+            },
+            { text: "It features a famous iron tower." },
+            {
+              image:
+                "https://via.placeholder.com/300x150/aabbcc/ffffff?text=Hint:+Iconic+Tower",
+            }, // Example hint image
+          ],
+        },
+        {
+          type: "fill-blank",
+          question: "The chemical symbol for water is H₂",
+          image:
+            "https://via.placeholder.com/400x200/cccccc/000000?text=Water+Molecule", // Example question image
+          answer: "O", // Case-insensitive check will be applied
+          hints: [
+            { text: "It's the symbol for Oxygen." },
+            { text: "Think about the elements that make up water." },
+          ],
+        },
+        {
+          type: "mcq",
+          question: "Which planet is known as the Red Planet?",
+          image: null,
+          options: [
+            { text: "Earth", correct: false },
+            { text: "Mars", correct: true },
+            { text: "Jupiter", correct: false },
+            { text: "Saturn", correct: false },
+          ],
+          hints: [
+            { text: "It's named after the Roman god of war." },
+            {
+              text: "Its reddish appearance is due to iron oxide on its surface.",
+            },
+          ],
+        },
+        {
+          type: "fill-blank",
+          question: "Complete the proverb: A picture is worth a thousand ____.",
+          image: null,
+          answer: "words",
+          hints: [
+            { text: "It means images can convey complex ideas effectively." },
+            { text: "The missing word is plural." },
+          ],
+        },
+        {
+          // Example of a question that might overflow
+          type: "mcq",
+          question:
+            "Which of these is NOT a primary color in the additive RGB color model used in screens?",
+          image: null,
+          options: [
+            { text: "Red", correct: false },
+            { text: "Yellow", correct: true },
+            { text: "Green", correct: false },
+            { text: "Blue", correct: false },
+          ],
+          hints: [
+            { text: "Primary colors combine to create other colors." },
+            {
+              text: "Think about the colors your computer monitor uses directly.",
+            },
+            { text: "Yellow is often created by mixing Red and Green light." },
+            {
+              text: "This color model is about adding light, not mixing paint (subtractive).",
+            },
+            {
+              text: "Subtractive primaries are often Cyan, Magenta, Yellow (CMY).",
+            },
+            { text: "There are three primary colors in the RGB model." },
+          ],
+        },
+      ];
+
+      // --- Dynamic Slide Generation ---
+      const slidesContainer = document.querySelector(".slides");
+
+      questions.forEach((qData, index) => {
+        const section = document.createElement("section");
+        section.setAttribute("data-question-index", index); // Store index on the slide
+
+        let questionHTML = `
+                <div class="question-container">
+                    <div class="question-text">${qData.question}</div>
+            `;
+
+        if (qData.image) {
+          questionHTML += `<img src="${qData.image}" alt="Question Image" class="question-image">`;
+        }
+
+        // --- Answer Area ---
+        if (qData.type === "mcq") {
+          questionHTML += `<ul class="options-list" id="options-${index}">`;
+          qData.options.forEach((opt, optIndex) => {
+            questionHTML += `
+                        <li class="option-item" data-correct="${opt.correct}" data-question-index="${index}">
+                            ${opt.text}
+                        </li>
+                    `;
+          });
+          questionHTML += `</ul>`;
+        } else if (qData.type === "fill-blank") {
+          questionHTML += `
+                    <div class="answer-area">
+                         <input type="text" class="fill-blank-input" id="input-${index}" placeholder="Type your answer here">
+                         <button class="submit-button" data-question-index="${index}">Check Answer</button>
+                    </div>
+                `;
+        }
+
+        // --- Feedback Area ---
+        questionHTML += `<div class="feedback" id="feedback-${index}"></div>`;
+
+        // --- Hint System ---
+        if (qData.hints && qData.hints.length > 0) {
+          questionHTML += `
+                    <button class="hint-button" data-question-index="${index}" data-hint-index="-1">Get Next Hint</button>
+                    <div class="hints-container" id="hints-${index}"></div>
+                `;
+        }
+
+        questionHTML += `</div>`; // Close question-container
+        section.innerHTML = questionHTML;
+        slidesContainer.appendChild(section);
+      });
+
+      // --- Event Listeners (Post-Generation) ---
+
+      // MCQ Option Clicks
+      document.querySelectorAll(".option-item").forEach((item) => {
+        item.addEventListener("click", handleMcqClick);
+      });
+
+      // Fill-in-the-Blank Submit Clicks
+      document.querySelectorAll(".submit-button").forEach((button) => {
+        button.addEventListener("click", handleFillBlankSubmit);
+      });
+
+      // Fill-in-the-Blank Enter Key Press
+      document.querySelectorAll(".fill-blank-input").forEach((input) => {
+        input.addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            // Find the associated button and trigger its click
+            const index = input.id.split("-")[1];
+            const button = document.querySelector(
+              `.submit-button[data-question-index="${index}"]`
+            );
+            if (button && !button.disabled) {
+              handleFillBlankSubmit({ target: button }); // Simulate click event
+            }
+          }
+        });
+      });
+
+      // Hint Button Clicks
+      document.querySelectorAll(".hint-button").forEach((button) => {
+        button.addEventListener("click", handleHintClick);
+      });
+
+      // --- Event Handler Functions ---
+
+      function handleMcqClick(event) {
+        const clickedOption = event.target;
+        const questionIndex = clickedOption.getAttribute("data-question-index");
+        const isCorrect = clickedOption.getAttribute("data-correct") === "true";
+        const optionsList = document.getElementById(`options-${questionIndex}`);
+        const feedbackDiv = document.getElementById(
+          `feedback-${questionIndex}`
+        );
+        const hintButton = document.querySelector(
+          `.hint-button[data-question-index="${questionIndex}"]`
+        );
+
+        // Remove previous feedback classes from all options
+        optionsList.querySelectorAll(".option-item").forEach((opt) => {
+          opt.classList.remove("correct-option", "wrong-option", "disabled");
+        });
+
+        // Provide feedback
+        if (isCorrect) {
+          clickedOption.classList.add("correct-option");
+          feedbackDiv.textContent = "Correct!";
+          feedbackDiv.className = "feedback correct";
+
+          // Only disable options and hint button when correct
+          optionsList.querySelectorAll(".option-item").forEach((opt) => {
+            opt.classList.add("disabled");
+          });
+          if (hintButton) {
+            hintButton.disabled = true;
+            hintButton.textContent = "Question Completed";
+          }
+        } else {
+          clickedOption.classList.add("wrong-option");
+          feedbackDiv.textContent = "Incorrect. Try again!";
+          feedbackDiv.className = "feedback wrong";
+          // Don't disable the hint button or other options
+        }
+      }
+
+      function handleFillBlankSubmit(event) {
+        const submitButton = event.target;
+        const questionIndex = submitButton.getAttribute("data-question-index");
+        const inputField = document.getElementById(`input-${questionIndex}`);
+        const feedbackDiv = document.getElementById(
+          `feedback-${questionIndex}`
+        );
+        const hintButton = document.querySelector(
+          `.hint-button[data-question-index="${questionIndex}"]`
+        );
+        const correctAnswer = questions[questionIndex].answer;
+        const userAnswer = inputField.value.trim();
+
+        // Check answer (case-insensitive)
+        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+          feedbackDiv.textContent = `Correct! The answer is "${correctAnswer}".`;
+          feedbackDiv.className = "feedback correct";
+          inputField.style.borderColor = "#28a745"; // Green border
+
+          // Only disable input and buttons when correct
+          inputField.disabled = true;
+          submitButton.disabled = true;
+          if (hintButton) {
+            hintButton.disabled = true;
+            hintButton.textContent = "Question Completed";
+          }
+        } else {
+          feedbackDiv.textContent = `Incorrect. Try again!`;
+          feedbackDiv.className = "feedback wrong";
+          inputField.style.borderColor = "#dc3545"; // Red border
+          // Don't disable anything for wrong answers
+          inputField.select(); // Select the text for easy retry
+        }
+      }
+
+      function handleHintClick(event) {
+        const hintButton = event.target;
+        const questionIndex = hintButton.getAttribute("data-question-index");
+        let currentHintIndex = parseInt(
+          hintButton.getAttribute("data-hint-index")
+        );
+        const hintsContainer = document.getElementById(
+          `hints-${questionIndex}`
+        );
+        const questionHints = questions[questionIndex].hints;
+
+        currentHintIndex++; // Move to the next hint index
+
+        if (currentHintIndex < questionHints.length) {
+          const hintData = questionHints[currentHintIndex];
+          const hintElement = document.createElement("div");
+          hintElement.classList.add("hint-item");
+
+          let hintContent = "";
+          if (hintData.text) {
+            hintContent += `<p>${hintData.text}</p>`;
+          }
+          if (hintData.image) {
+            hintContent += `<img src="${hintData.image}" alt="Hint Image" class="hint-image">`;
+          }
+          hintElement.innerHTML = hintContent;
+
+          hintsContainer.appendChild(hintElement);
+          hintButton.setAttribute("data-hint-index", currentHintIndex); // Update the button's state
+
+          // Disable button if it was the last hint
+          if (currentHintIndex === questionHints.length - 1) {
+            hintButton.disabled = true;
+            hintButton.textContent = "All Hints Shown";
+          }
+        } else {
+          // Should not happen if button is disabled correctly, but as a safeguard:
+          hintButton.disabled = true;
+          hintButton.textContent = "All Hints Shown";
+        }
+      }
+    </script>
+
+    <!-- Reveal.js Plugins -->
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+     
+      Reveal.initialize({
+        hash: true, // Enables deep linking to slides
+        controls: true, // Display controls in the bottom right corner
+        progress: true, // Display a presentation progress bar
+        center: true, // Vertical centering
+        slideNumber: "c/t", // Show slide number (current/total)
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>
