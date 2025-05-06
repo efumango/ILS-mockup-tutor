@@ -175,93 +175,102 @@
     <script>
       // --- Question Data ---
       const questions = [
-        {
-          type: "mcq",
-          question: "What is the capital of France?",
-          image: null, // No image for this question
-          options: [
-            { text: "Berlin", correct: false },
-            { text: "Madrid", correct: false },
-            { text: "Paris", correct: true },
-            { text: "Rome", correct: false },
-          ],
-          hints: [
-            {
-              text: "It's a major European city known for its art and fashion.",
-            },
-            { text: "It features a famous iron tower." },
-            {
-              image:
-                "https://via.placeholder.com/300x150/aabbcc/ffffff?text=Hint:+Iconic+Tower",
-            }, // Example hint image
-          ],
-        },
-        {
-          type: "fill-blank",
-          question: "The chemical symbol for water is H₂",
-          image:
-            "https://via.placeholder.com/400x200/cccccc/000000?text=Water+Molecule", // Example question image
-          answer: "O", // Case-insensitive check will be applied
-          hints: [
-            { text: "It's the symbol for Oxygen." },
-            { text: "Think about the elements that make up water." },
-          ],
-        },
-        {
-          type: "mcq",
-          question: "Which planet is known as the Red Planet?",
-          image: null,
-          options: [
-            { text: "Earth", correct: false },
-            { text: "Mars", correct: true },
-            { text: "Jupiter", correct: false },
-            { text: "Saturn", correct: false },
-          ],
-          hints: [
-            { text: "It's named after the Roman god of war." },
-            {
-              text: "Its reddish appearance is due to iron oxide on its surface.",
-            },
-          ],
-        },
-        {
-          type: "fill-blank",
-          question: "Complete the proverb: A picture is worth a thousand ____.",
-          image: null,
-          answer: "words",
-          hints: [
-            { text: "It means images can convey complex ideas effectively." },
-            { text: "The missing word is plural." },
-          ],
-        },
-        {
-          // Example of a question that might overflow
-          type: "mcq",
-          question:
-            "Which of these is NOT a primary color in the additive RGB color model used in screens?",
-          image: null,
-          options: [
-            { text: "Red", correct: false },
-            { text: "Yellow", correct: true },
-            { text: "Green", correct: false },
-            { text: "Blue", correct: false },
-          ],
-          hints: [
-            { text: "Primary colors combine to create other colors." },
-            {
-              text: "Think about the colors your computer monitor uses directly.",
-            },
-            { text: "Yellow is often created by mixing Red and Green light." },
-            {
-              text: "This color model is about adding light, not mixing paint (subtractive).",
-            },
-            {
-              text: "Subtractive primaries are often Cyan, Magenta, Yellow (CMY).",
-            },
-            { text: "There are three primary colors in the RGB model." },
-          ],
-        },
-      ];
+      // 1. What is Overfitting?
+      {
+        type: "mcq",
+        question: "What is the correct definition of overfitting?",
+        image: null,
+        options: [
+          { text: "A model that memorizes the training data and performs poorly on new data", correct: true },
+          { text: "A model that simplifies to improve generalization", correct: false },
+          { text: "A model that performs equally well on training and test data", correct: false },
+          { text: "A model that ignores the training data and predicts randomly", correct: false },
+        ],
+        hints: [
+          { text: "Think about what happens when a model is too focused on just the training data." },
+          { text: "Overfitting = memorizing instead of learning." },
+          { text: "The model performs well on training data but fails on unseen examples." }
+        ]
+      },
+
+      // 2. What is Underfitting?
+      {
+        type: "mcq",
+        question: "What does it mean when a model is underfitting?",
+        image: null,
+        options: [
+          { text: "It performs well on both training and test data", correct: false },
+          { text: "It fails to learn from the training data at all", correct: true },
+          { text: "It memorizes the data perfectly", correct: false },
+          { text: "It uses too much training data", correct: false },
+        ],
+        hints: [
+          { text: "Underfitting = model is too simple to learn the patterns." },
+          { text: "It doesn’t even do well on training data!" },
+          { text: "Imagine trying to solve all problems with only 1+1 = 2." }
+        ]
+      },
+
+      // 3. How do they look like? (Visual)
+      {
+        type: "mcq",
+        question: "Which of these graphs likely shows an overfitted model?",
+        image: "/images/overfitting.jpg",
+        options: [
+          { text: "A", correct: false },
+          { text: "B", correct: false },
+          { text: "C", correct: true }
+        ],
+        hints: [
+          { text: "Overfit models look too complex." },
+          { text: "They try to hit every training point, even the weird ones." },
+          { text: "Generalization is poor, but training accuracy is perfect." }
+        ]
+      },
+
+      // 4. Consequence of Overfitting
+      {
+      type: "fill-blank",
+      question: "A model that performs well on training data but poorly on test data is suffering from ____.",
+      image: null,
+      answer: "overfitting",
+        hints: [
+          { text: "What happens when your model only works well on data it’s already seen?" },
+          { text: "That’s the core symptom of overfitting." }
+        ]
+      },
+
+      // 5. Consequence of Underfitting
+      {
+        type: "fill-blank",
+        question: "If a model is too simple to even learn the training data well, it's an example of ____.",
+        image: null,
+        answer: "underfitting",
+        hints: [
+          { text: "A simple model can’t capture complex patterns." },
+          { text: "Underfitting = underlearning." }
+        ]
+      },
+
+      // 6. Generalization Skill
+      {
+        type: "mcq",
+        question: "Which model is likely to perform best on new data?",
+        image: null,
+        options: [
+          { text: "A model that memorizes training data", correct: false },
+          { text: "A model that didn’t learn much at all", correct: false },
+          { text: "A model that learns patterns and generalizes", correct: true },
+          { text: "A model that guesses randomly", correct: false },
+        ],
+        hints: [
+          { text: "Memorizing isn’t the same as understanding." },
+          { text: "Generalization is key to good ML performance." },
+          { text: "Think like a student who understands, not just remembers." }
+        ]
+      }
+    ];
+
 
       // --- Dynamic Slide Generation ---
       const slidesContainer = document.querySelector(".slides");
@@ -435,7 +444,7 @@
         );
         const questionHints = questions[questionIndex].hints;
 
-        currentHintIndex++; // Move to the next hint index
+        currentHintIndex++; 
 
         if (currentHintIndex < questionHints.length) {
           const hintData = questionHints[currentHintIndex];
@@ -460,7 +469,6 @@
             hintButton.textContent = "All Hints Shown";
           }
         } else {
-          // Should not happen if button is disabled correctly, but as a safeguard:
           hintButton.disabled = true;
           hintButton.textContent = "All Hints Shown";
         }
