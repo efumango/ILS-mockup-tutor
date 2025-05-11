@@ -160,6 +160,13 @@
         font-style: italic;
         color: #eee;
       }
+
+      p.speaker-n {
+        background-color: #343131;
+        padding: 8px 8px;
+        color:#64428c
+      }
+
     </style>
   </head>
   <body>
@@ -168,6 +175,28 @@
         <section>
           <h2>Welcome to the Tutor!</h2>
           <p>Navigate using the arrows (or swipe) to see the questions.</p>
+          <p class="speaker-n">Press "s" to see the questions related skills</p>
+          <aside class ="notes">
+            The tutor is based on the following learning theories:
+            <ul>
+              <li>Constructivism</li>
+                <ul>
+                  <li>Questions rely on learners' already existing knowledge models of machine learning/training AI</li>
+                  <li>Prior existing knowledge schemes provide the foundation to actively construct further knowledge by reflecting and exploring the domain of over/underfitting</li>
+                  <li>The interaction with the environment (Tasks in the Tutor) offers the opportunity to apply newly acquired skills to manifest knowledge by assimilation or accommodation</li>
+                </ul>
+
+              <li>Cognitivism</li>
+                <ul>
+                  <li>Learning depends on learner’s memory capacity and their information retrieval abilities</li>
+                  <li>Inspired by the cognitive theory of multimedia learning we chose to utilise pictures and words to optimise learning, preventing work overload</li>
+                  <li>Focus on words and pictures to construct coherent mental representations</li>
+                </ul>
+            </ul>
+
+            Additionally:
+            Children have limited cognitive abilities, a simplification of questions and tasks are crucial for hindering demotivation and to foster a sense of accomplishments to encourage inquisitiveness.
+          </aside>
         </section>
       </div>
     </div>
@@ -190,6 +219,11 @@
           { text: "Think about what happens when a model is too focused on just the training data." },
           { text: "Overfitting = memorizing instead of learning." },
           { text: "The model performs well on training data but fails on unseen examples." }
+        ],
+        notes: [
+          { text:"Basic understanding of machine learning" },
+          { text: "Comparing and analysing information provided by hints to solve question (analytical reasoning)"},
+          { text: "Retrieval of declarative information"}
         ]
       },
 
@@ -208,7 +242,13 @@
           { text: "Underfitting = model is too simple to learn the patterns." },
           { text: "It doesn’t even do well on training data!" },
           { text: "Imagine trying to solve all problems with only 1+1 = 2." }
-        ]
+        ],
+        notes: [
+          { text: "Active recall of prior knowledge e.g. Know the goal of training a model"},
+          { text: "Fact-checking ability e.g. falsification"},
+          { text: "Higher-order critical thinking"},
+          { text: "Assimilation and accommodation"}
+        ] 
       },
 
       // 3. How do they look like? (Visual)
@@ -225,6 +265,11 @@
           { text: "Overfit models look too complex." },
           { text: "They try to hit every training point, even the weird ones." },
           { text: "Generalization is poor, but training accuracy is perfect." }
+        ],
+        notes: [
+          { text: "Recall of declarative memory (retrieve concept of overfitting)"},
+          { text: "Attention to details, ability to utilise newly acquired information by creating and retrieving associations to construct further knowledge"},
+          { text: "Testing understanding by applying knowledge on task(s) (interacting with the environment/knowledge-construction tasks)"}
         ]
       },
 
@@ -237,6 +282,12 @@
         hints: [
           { text: "What happens when your model only works well on data it’s already seen?" },
           { text: "That’s the core symptom of overfitting." }
+        ],
+        notes: [
+          { text: "Transfer of learning (near transfer) —> recall of declarative memory"},
+          { text: "Testing understanding by applying knowledge on task(s) (interacting with the environment)"},
+          { text: "Retrieval of knowledge to manifest newly acquired informations"},
+          { text: "Critical differentiation & Conceptual Understanding (Domain Knowledge)"}
         ]
       },
 
@@ -249,6 +300,12 @@
         hints: [
           { text: "A simple model can’t capture complex patterns." },
           { text: "Underfitting = underlearning." }
+        ],
+        notes: [
+          { text: "Transfer of learning (near transfer) —> recall of declarative memory"},
+          { text: "Testing understanding by applying knowledge on task(s) (interacting with the environment)"},
+          { text: "Retrieval of knowledge to manifest newly acquired informations"},
+          { text: "Critical differentiation & Conceptual Understanding (Domain Knowledge)"}
         ]
       },
 
@@ -267,6 +324,11 @@
           { text: "Memorizing isn’t the same as understanding." },
           { text: "Generalization is key to good ML performance." },
           { text: "Think like a student who understands, not just remembers." }
+        ],
+        notes: [
+          { text: "Transfer of learning (near transfer)"},
+          { text: "Critical reading, interpretation & comparative reasoning"},
+          { text: "retrieval of previously acquired knowledge to manifest informations by: reactivating schemes, constructive processing and active recall of informations"}
         ]
       }
     ];
@@ -320,6 +382,18 @@
         }
 
         questionHTML += `</div>`; // Close question-container
+
+        // --- Speaker Notes ---
+        if (qData.notes) {
+          questionHTML += `<aside class ="notes">`;
+          questionHTML += `<ul>`;
+          qData.notes.forEach((note, noteIndex) => {
+            questionHTML += `<li>${note.text}</li>`
+          });
+          questionHTML += `</ul>`
+          questionHTML += `</aside>`;          
+        }
+
         section.innerHTML = questionHTML;
         slidesContainer.appendChild(section);
       });
